@@ -5,6 +5,18 @@ const LectureSchema = new mongoose.Schema({
   videoUrl: String,
   public_id: String,
   freePreview: Boolean,
+  pdfUrl: String,
+});
+
+const QuestionSchema = new mongoose.Schema({
+  questionText: String,
+  options: [String],
+  correctAnswer: String
+});
+
+const QuizSchema = new mongoose.Schema({
+  title: String,
+  questions: [QuestionSchema]
 });
 
 const CourseSchema = new mongoose.Schema({
@@ -19,7 +31,6 @@ const CourseSchema = new mongoose.Schema({
   description: String,
   image: String,
   welcomeMessage: String,
-  pricing: Number,
   objectives: String,
   students: [
     {
@@ -30,7 +41,8 @@ const CourseSchema = new mongoose.Schema({
     },
   ],
   curriculum: [LectureSchema],
+  quiz: QuizSchema,
   isPublised: Boolean,
-});
+})
 
 module.exports = mongoose.model("Course", CourseSchema);
