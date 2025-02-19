@@ -6,7 +6,6 @@ const registerUser = async (req, res) => {
   try {
     const { userName, userEmail, password, role } = req.body;
 
-    // Validate input
     if (!userName?.trim() || !userEmail?.trim() || !password) {
       return res.status(400).json({
         success: false,
@@ -14,7 +13,6 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userEmail)) {
       return res.status(400).json({
@@ -23,7 +21,6 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({
       $or: [
         { userEmail: userEmail.toLowerCase() },
@@ -38,7 +35,6 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Hash password and create new user
     const hashPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       userName: userName.trim(),
@@ -55,8 +51,7 @@ const registerUser = async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
-    
-    // Handle specific MongoDB duplicate key errors
+
     if (error.code === 11000) {
       const field = Object.keys(error.keyPattern)[0];
       return res.status(400).json({
@@ -91,7 +86,7 @@ const loginUser = async (req, res) => {
       userEmail: checkUser.userEmail,
       role: checkUser.role,
     },
-    "JWT_SECRET",
+    "hamzah",
     { expiresIn: "120m" }
   );
 
@@ -110,4 +105,66 @@ const loginUser = async (req, res) => {
   });
 };
 
-module.exports = { registerUser, loginUser };
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.status(200).json({
+      success: true,
+      data: users,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Some error occured!",
+    });
+  }
+}
+
+const deleteUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await User.findByIdAndDelete(id);
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully",
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Some error occured!",
+    });
+  }
+}
+
+const updateUserData = async (req, res) => {
+  try {
+    const data = req.body;
+    const { id } = req.params;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      data
+    );
+    if(!updatedUser){
+      return res.status(404).json({
+        success: false,
+        message: "User not found!",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      data: updatedCourse,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Some error occured!",
+    });
+  }
+}
+
+
+module.exports = { registerUser, loginUser, updateUserData, deleteUser, getAllUsers };

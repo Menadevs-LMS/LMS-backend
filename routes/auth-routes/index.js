@@ -2,11 +2,16 @@ const express = require("express");
 const {
   registerUser,
   loginUser,
+  deleteUser,
+  getAllUsers, updateUserData
 } = require("../../controllers/auth-controller/index");
 const authenticateMiddleware = require("../../middleware/auth-middleware");
 const router = express.Router();
 
 router.post("/register", registerUser);
+router.delete("/delete-user/:id", deleteUser);
+router.get("/allusers", getAllUsers);
+router.post("/updateuser/:id", updateUserData);
 router.post("/login", loginUser);
 router.get("/check-auth", authenticateMiddleware, (req, res) => {
   const user = req.user;

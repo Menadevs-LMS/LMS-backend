@@ -18,10 +18,10 @@ const authenticate = (req, res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    const payload = verifyToken(token, "JWT_SECRET");
+    const payload = verifyToken(token, "hamzah");
 
     req.user = payload;
-
+   console.log("req.user>>>>>>>>",req.user)
     next();
   } catch (e) {
     return res.status(401).json({
