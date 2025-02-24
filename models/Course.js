@@ -1,4 +1,21 @@
 const mongoose = require("mongoose");
+const QuestionSchema = new mongoose.Schema({
+  questionText: { type: String, required: true },
+  questionType: {
+    type: String,
+    enum: ["multiple-choice", "truth-sentence", "paragraph"],
+    default: "multiple-choice"
+  },
+  options: [String],
+  correctAnswer: { type: String },
+  truthAnswers: [{ type: String }],
+  paragraphAnswer: { type: String }
+});
+
+const QuizSchema = new mongoose.Schema({
+  title: String,
+  questions: [QuestionSchema]
+});
 
 const LectureSchema = new mongoose.Schema({
   title: String,
@@ -6,18 +23,12 @@ const LectureSchema = new mongoose.Schema({
   public_id: String,
   freePreview: Boolean,
   pdfUrl: String,
+  quiz: QuizSchema,
 });
 
-const QuestionSchema = new mongoose.Schema({
-  questionText: String,
-  options: [String],
-  correctAnswer: String
-});
 
-const QuizSchema = new mongoose.Schema({
-  title: String,
-  questions: [QuestionSchema]
-});
+
+
 
 const CourseSchema = new mongoose.Schema({
   instructorId: String,
